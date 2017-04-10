@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+    </body>
+    <script type="text/javascript">
+    	var observer1 = function() {
+    		this.__messages = [];
+    		this.name = 'haha';
+    	}
+    	observer1.prototype.regist = function(type, fn) {
+			if (typeof this.__messages[type] === 'undefined') {
+				this.__messages[type] = [fn];
+			} else {
+				this.__messages.push(fn);
+			}
+		};
+		observer1.prototype.fire = function(type, args) {
+			if (!this.__messages[type]) {
+				return;
+			}
+			var events = {
+				type: type,
+				args: args || {}
+			};
+			for (var i = 0; i < this.__messages[type].length; i++) {
+				this.__messages[type][i].call(this, events);
+			}
+		};
+		observer1.prototype.remove = function(type, fn) {
+			if (this.__messages[type] instanceof Array) {
+				var i = this.__messages[type].length - 1;
+				for (;i >= 0;i--) {
+					this.__messages[type] == fn && this.__messages[type].splice(i, 1);
+				}
+			}
+		}
+		
+		function observer() {
+			var __messages = [];
+			function regist(type, fn) {
+				if (typeof __messages[type] === 'undefined') {
+					__messages[type] = [fn];
+				} else {
+					__messages[type].push(fn);
+				}
+			}
+			function fire(type, args) {
+				if (!__messages[type]) {
+					return;
+				}
+				var events = {
+					type: type,
+					args: args
+				};
+				for (var i = 0; i < __messages[type].length; i++) {
+					__messages[type][i].call(this, events);
+				}
+			}
+			function remove(type, fn) {
+				if (__messages[type] instanceof Array) {
+					var i = __messages[type].length - 1;
+					for (;i>=0;i--) {
+						__messages[type][i] === fn && __messages[type].splice(i, 1);
+					}
+				}
+			}
+			return {
+				regist: regist,
+				fire: fire,
+			}
+		}
+		var myText = observer();
+		myText.regist('fun', function(str) {
+			alert(str.args);
+		});
+		myText.fire('fun', 'nihao');
+    </script>
+</html>
